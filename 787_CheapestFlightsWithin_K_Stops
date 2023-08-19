@@ -1,0 +1,37 @@
+#define MAX_NODES 100
+#define MAX_FLIGHTS 10000
+
+int min(int a, int b) {
+    return a < b ? a : b;
+}
+
+int findCheapestPrice(int n, int** flights, int flightsSize, int* flightsColSize, int src, int dst, int k) {
+    int dist[MAX_NODES][k + 2];
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j <= k + 1; j++) {
+            dist[i][j] = INT_MAX;
+        }
+    }
+
+    dist[src][0] = 0;
+
+    for (int i = 0; i <= k; i++) {
+        for (int j = 0; j < flightsSize; j++) {
+            int u = flights[j][0];
+            int v = flights[j][1];
+            int price = flights[j][2];
+
+            if (dist[u][i] != INT_MAX && dist[u][i] + price < dist[v][i + 1]) {
+                dist[v][i + 1] = dist[u][i] + price;
+            }
+        }
+    }
+
+    int minPrice = INT_MAX;
+    for (int i = 0; i <= k + 1; i++) {
+        minPrice = min(minPrice, dist[dst][i]);
+    }
+
+    return minPrice == INT_MAX ? -1 : minPrice;
+}
